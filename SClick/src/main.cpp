@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Application/Application.h"
 
+
 int main()
 {
 	SClick::Core::Window::Window window;
