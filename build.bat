@@ -1,0 +1,1 @@
+start premake5 vs2022

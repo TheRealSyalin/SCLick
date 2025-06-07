@@ -1,0 +1,13 @@
+.vs
+bin
+obj
+SClick/bin
+SClick/obj
+
+SClick-lib/bin
+SClick-lib/obj
+
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
