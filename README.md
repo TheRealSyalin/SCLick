@@ -1,0 +1,2 @@
+# SCLick
+Vector drawing program
