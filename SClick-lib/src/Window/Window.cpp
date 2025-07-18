@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "../EventSystem/EventSystem.h"
 
+#include "../EventSystem/EventSystem.h"
 #include "Window.h"
 
 namespace SClick::Core::Window
@@ -14,7 +14,7 @@ namespace SClick::Core::Window
 	{
 		window = new SCLICKWINDOW(p_windowName, p_width, p_hieght);
 		window->SetEventCallback([&manager](unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord) {
-			manager.GetEventCollector().CollectorCallback(eventTypeWord, highWord, lowWord);
+			manager.GetEventCollector().PostEvent(eventTypeWord, highWord, lowWord);
 			});
 
 		window->SCreateWindow();
@@ -22,6 +22,7 @@ namespace SClick::Core::Window
 
 	Window::~Window()
 	{
+		CleanUp();
 	}
 
 	int Window::Update()

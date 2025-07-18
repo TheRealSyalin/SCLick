@@ -22,6 +22,136 @@ namespace SClick::Core::Window::OSWindow
 	{
 	}
 
+	LRESULT WindowsWindow::ThisWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		
+		if (uMsg == WM_CLOSE)
+		{
+			DestroyWindow(hwnd);
+			return 0;
+		}
+
+		if (uMsg == WM_DESTROY)
+		{
+			m_EventCallback((unsigned int)EventType::WindowDestroy, 0, 0);
+
+			PostQuitMessage(0);
+
+			return 0;
+		}
+
+		if (uMsg == WM_PAINT)
+		{
+			m_EventCallback((unsigned int)EventType::WindowRedraw, 0, 0);
+		}
+
+		if (uMsg == WM_SIZE)
+		{
+			unsigned short width = LOWORD(lParam);
+			unsigned short height = HIWORD(lParam);
+
+			m_width = width;
+			m_height = height;
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::WindowResize, width, height);
+
+			return DefWindowProc(hwnd, uMsg, wParam, lParam);
+		}
+
+		unsigned int LMouseCode = MouseButtons::LMOUSE << 16;
+		unsigned int RMouseCode = MouseButtons::RMOUSE << 16;
+		unsigned int MMouseCode = MouseButtons::MMOUSE << 16;
+
+		if (uMsg == WM_MOUSEMOVE)
+		{
+
+			unsigned short x = LOWORD(lParam);
+			unsigned short y = HIWORD(lParam);
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::MouseMove, x, y);
+		}
+
+		// LEFT MOUSE BUTTON //
+		if (uMsg == WM_LBUTTONDOWN)
+		{
+			unsigned short x = LOWORD(lParam);
+			unsigned short y = HIWORD(lParam);
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::MouseButtonDown | LMouseCode, x, y);
+		}
+
+		if (uMsg == WM_LBUTTONUP)
+		{
+			unsigned short x = LOWORD(lParam);
+			unsigned short y = HIWORD(lParam);
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::MouseButtonUp | LMouseCode, x, y);
+		}
+
+		// RIGHT MOUSE BUTTON //
+		if (uMsg == WM_RBUTTONDOWN)
+		{
+			unsigned short x = LOWORD(lParam);
+			unsigned short y = HIWORD(lParam);
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::MouseButtonDown | RMouseCode, x, y);
+		}
+
+		if (uMsg == WM_RBUTTONUP)
+		{
+			unsigned short x = LOWORD(lParam);
+			unsigned short y = HIWORD(lParam);
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::MouseButtonUp | RMouseCode, x, y);
+		}
+
+		 // MIDDLE MOUSE BUTTON //
+		if (uMsg == WM_MBUTTONDOWN)
+		{
+			unsigned short x = LOWORD(lParam);
+			unsigned short y = HIWORD(lParam);
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::MouseButtonDown | MMouseCode, x, y);
+		}
+
+		if (uMsg == WM_MBUTTONUP)
+		{
+			unsigned short x = LOWORD(lParam);
+			unsigned short y = HIWORD(lParam);
+
+			if (m_EventCallback)
+				m_EventCallback((unsigned int)EventType::MouseButtonUp | MMouseCode, x, y);
+		}
+
+		/*
+		In case of EventType::KeyPress, highWord is the KeyCode to be translated
+		lowWord indicates a repeat event. This is just for logging purposes.
+		*/
+		if (uMsg == WM_KEYDOWN)
+		{
+			/*
+			WinUser.h offers ways to get the repeat bit,
+			but i like doing it myself cuz im tired of looking at capital letters.
+			*/
+			unsigned long long bitMask = static_cast<unsigned long long>(1) << 30;
+			unsigned long long bit = bitMask & lParam;
+
+			if (bit != 0)
+				m_EventCallback((unsigned int)EventType::KeyRepeat, static_cast<unsigned short>(wParam), 1);
+			else
+				m_EventCallback((unsigned int)EventType::KeyPress, static_cast<unsigned short>(wParam), 0);
+		}
+
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	}
+
 	LRESULT WindowsWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		WindowsWindow* window = nullptr;
@@ -38,63 +168,8 @@ namespace SClick::Core::Window::OSWindow
 			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
 		}
 
-		if (uMsg == WM_CLOSE)
-		{
-			DestroyWindow(hwnd);
-			return 0;
-		}
-
-		if (uMsg == WM_DESTROY)
-		{
-			if (window)
-				window->m_EventCallback((unsigned int)EventType::WindowDestroy, 0, 0);
-
-			PostQuitMessage(0);
-
-			return 0;
-		}
-
-		if (uMsg == WM_SIZE)
-		{
-			if (!window)
-				return 0;
-
-			unsigned short width = LOWORD(lParam);
-			unsigned short height = HIWORD(lParam);
-
-			window->m_width = width;
-			window->m_height = height;
-
-			if (window->m_EventCallback)
-				window->m_EventCallback((unsigned int)EventType::WindowResize, width, height);
-
-			return 0;
-
-		}
-
-		/*
-		In case of EventType::KeyPress, highWord is the KeyCode to be translated
-		lowWord indicates a repeat event. This is just for logging purposes.
-		*/
-		if (uMsg == WM_KEYDOWN)
-		{
-			if (!window)
-				return 0;
-				/*
-				WinUser.h offers ways to get the repeat bit,
-				but i like doing it myself cuz im tired of looking at capital letters.
-				*/
-				unsigned long long bitMask = static_cast<unsigned long long>(1) << 30;
-				unsigned long long bit = bitMask & lParam;
-
-				if(bit != 0)
-					window->m_EventCallback((unsigned int)EventType::KeyRepeat, static_cast<unsigned short>(wParam), 1);
-				else
-					window->m_EventCallback((unsigned int)EventType::KeyPress, static_cast<unsigned short>(wParam), 0);
-
-				return 0;
-
-		}
+		if(window)
+			return window->ThisWindowProc(hwnd, uMsg, wParam, lParam);
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
@@ -119,7 +194,7 @@ namespace SClick::Core::Window::OSWindow
 		m_handle = CreateWindowEx(0,
 			CLASSNAME, 
 			windowName, 
-			WS_OVERLAPPEDWINDOW, 
+			WS_OVERLAPPEDWINDOW,
 			0, 0, m_width, m_height, 0, 0, 
 			hInstance, 
 			this);

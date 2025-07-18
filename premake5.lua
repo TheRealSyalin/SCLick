@@ -27,12 +27,12 @@ workspace "SClick-DrawingProgram"
 	   architecture "x86_64"
 	   defines { "UNICODE" }
 
-	   pchheader "pch.h"
-	   pchsource "SClick/src/z_pch/pch.cpp"
+	   --pchheader "pch.h"
+	   --pchsource "SClick/src/z_pch/pch.cpp"
 
 	   includedirs {
 		   "SClick-lib/include",
-		   "SClick/src/z_pch",
+		   --"SClick/src/z_pch",
 	   }
 
 	 project "SClick-lib"

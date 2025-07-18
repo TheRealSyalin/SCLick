@@ -1,7 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
 #ifdef WINDOWS
 #include "OS/Windows/WindowsWindow.h"
 #define SCLICKWINDOW SClick::Core::Window::OSWindow::WindowsWindow
@@ -11,6 +9,8 @@
 #include "OS/Linux/LinuxWindow.h"
 #define SCLICKWINDOW SClick::Core::Window::OSWindow::LinuxWindow
 #endif
+
+
 
 namespace SClick::Core::Window
 {

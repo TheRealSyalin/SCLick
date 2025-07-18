@@ -1,7 +1,8 @@
 #pragma once
 
-#include "pch.h"
-#include "../../I_OSWindow.h"
+#include <Windows.h>
+
+#include "../I_OSWindow.h"
 #include "../../../EventSystem/EventSystem.h"
 
 namespace SClick::Core::Window::OSWindow
@@ -23,10 +24,13 @@ namespace SClick::Core::Window::OSWindow
 		void SetEventCallback(std::function<void(
 			unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)> func) override;
 
+	public:
+		LRESULT ThisWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 	private:
 		HWND m_handle;
 
 	private:
-		static LRESULT WindowsWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		static LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
 namespace SClick::Core::EventSystem::Internal
 {
 #define uint_64 unsigned long long
@@ -9,8 +7,7 @@ namespace SClick::Core::EventSystem::Internal
 
 	class EventQueue
 	{
-	public:
-		bool isEmpty = true;
+	
 	public:
 		EventQueue() 
 		{
@@ -63,6 +60,19 @@ namespace SClick::Core::EventSystem::Internal
 			return temp;
 		}
 
+		void FreeQueue()
+		{
+			for (int i = 0; i < capacity; i++)
+			{
+				queue[i] = 0;
+			}
+
+			front = 0;
+			tail = 0;
+			count = 0;
+			isEmpty = true;
+		}
+
 		uint_64 Peek()
 		{
 			return queue[front];
@@ -76,6 +86,16 @@ namespace SClick::Core::EventSystem::Internal
 			}
 		}
 
+		int Size()
+		{
+			return count;
+		}
+
+		const bool IsEmpty() const
+		{
+			return isEmpty;
+		}
+
 	private:
 		static const int capacity = 125;
 		uint_64 queue[capacity];
@@ -83,6 +103,7 @@ namespace SClick::Core::EventSystem::Internal
 		int front = 0;
 		int tail = 0;
 		int count = 0;
+		bool isEmpty = true;
 
 	};
 }

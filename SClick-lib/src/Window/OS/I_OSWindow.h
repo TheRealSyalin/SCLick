@@ -1,5 +1,7 @@
 #pragma once
-#include "pch.h"
+
+#include <functional>
+
 #include "../EventSystem/EventSystem.h"
 
 namespace SClick::Core::Window

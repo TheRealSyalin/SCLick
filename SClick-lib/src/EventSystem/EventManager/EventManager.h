@@ -1,9 +1,10 @@
 #pragma once
 
-#include "pch.h"
+#include <functional>
 
 #include "EventCollector.h"
 #include "../Events/EventTypes.h"
+#include "../../y_Utility/Utility.h"
 
 namespace SClick::Core::EventSystem
 {
@@ -16,8 +17,13 @@ namespace SClick::Core::EventSystem
 	public:
 		Internal::EventCollector& GetEventCollector();
 
-		void PeekEvent(EventType type, std::function<void(unsigned short _1, unsigned short _2)> func);
+		//eventCallback returns true if it successfully handles the event and should remove the event from the queue
+        bool HandleEvent(EventType type, std::function<bool(unsigned short _1, unsigned short _2)> eventCallback);
+
+		//eventCallback activates if the event we are looking for is in the queue but does not remove it from the queue
+		bool PassthroughEvent(EventType type, std::function<void(unsigned short _1, unsigned short _2)> eventCallback);
 		
+		Utility::Vector2 GetMouseButton(unsigned char mouseButton);
 
 	private:
 		Internal::EventCollector collector;

@@ -1,13 +1,11 @@
-#include "pch.h"
 #include "Application/Application.h"
 
 
 int main()
 {
-	SClick::Core::Window::Window window;
-	SClick::Core::EventSystem::EventManager eventManager;
+	SClick::Core::Renderer::Renderer renderer;
+	SClick::Core::EventSystem::EventManager mainWindowEventManager;
+	SClick::Core::Window::Window window = { "SClick", 1920, 1080, mainWindowEventManager };
 
-	SClick::Application::Init(window, eventManager);
-	SClick::Application::Run(window, eventManager);
-	SClick::Application::Shutdown(window, eventManager);
+	SClick::Application::Run(window, renderer ,mainWindowEventManager);
 }
