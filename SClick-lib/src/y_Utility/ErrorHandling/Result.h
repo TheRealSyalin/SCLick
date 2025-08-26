@@ -1,5 +1,7 @@
 #pragma once
 
+#include <expected>
+
 namespace SClick::Core::DataType::ErrorHandling
 {
 	template<typename ReturnType, typename ErrorType>
@@ -23,7 +25,7 @@ namespace SClick::Core::DataType::ErrorHandling
 {
 	template<typename ReturnType, typename ErrorType>
 	Result<ReturnType, ErrorType>::Result()
-		:isError(false) {
+		:error(), isError(false) {
 	}
 
 	template<typename ReturnType, typename ErrorType>

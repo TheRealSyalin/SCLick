@@ -89,7 +89,6 @@ namespace SClick::Core::EventSystem
 		return mousePos;
 	}
 
-	//PROBLEM HERE
 	std::tuple<MouseButtons, DataType::Vector2> EventManager::GetMouseButton()
 	{
 		std::uint64_t event = queue.Peek();

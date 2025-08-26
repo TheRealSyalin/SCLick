@@ -78,7 +78,6 @@ namespace SClick::Core::Renderer::Internal
 	DataType::ErrorHandling::Result<int, DataType::ErrorHandling::TemplateFriendlyString<255>> DX2DResourceCreator::Init()
 	{
 		DataType::ErrorHandling::Result<int, DataType::ErrorHandling::TemplateFriendlyString<255>> result = {};
-		result.value = 0;
 
 		HRESULT hr = S_OK;
 
@@ -221,8 +220,8 @@ namespace SClick::Core::Renderer::Internal
 			D2D1::BitmapProperties1(
 				D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
 				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
-				windowDPI,
-				windowDPI
+				static_cast<FLOAT>(windowDPI),
+				static_cast<FLOAT>(windowDPI)
 			);
 
 		hr = m_swapchain->GetBuffer(0, IID_PPV_ARGS(&m_dxgiBackbuffer));
@@ -244,10 +243,11 @@ namespace SClick::Core::Renderer::Internal
 		}
 
 		m_context->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 0.3f), &m_brush);
-		m_context->SetDpi(windowDPI, windowDPI);
+		m_context->SetDpi(static_cast<FLOAT>(windowDPI), static_cast<FLOAT>(windowDPI));
 
 		m_context->SetTarget(m_renderTargetBitmap);
 
+		result.value = 0;
 		return result;
 	}
 

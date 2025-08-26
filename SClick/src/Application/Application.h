@@ -57,6 +57,7 @@ namespace SClick::Application
 
 				windowEventManager.HandleEvent(EventType::WindowRedraw, [&textures](unsigned short _1, unsigned short _2)
 					{
+						std::cout << "PAINT\n";
 						return true;
 					});
 
@@ -108,7 +109,7 @@ namespace SClick::Application
 				accumulate = 0;
 			}
 
-			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			//git std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			lastTime = timer.End().count();
 			END_EVENT_TIMER
 		}

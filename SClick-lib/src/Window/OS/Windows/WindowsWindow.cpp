@@ -32,16 +32,15 @@ namespace SClick::Core::Window::OSWindow
 
 		if (uMsg == WM_DESTROY)
 		{
-			m_eventCallback((unsigned int)EventType::WindowDestroy, 0, 0);
+			m_eventCallback(static_cast<unsigned int>(EventType::WindowDestroy), 0, 0);
 
 			PostQuitMessage(0);
 
 			return 0;
 		}
-
 		if (uMsg == WM_PAINT)
 		{
-			m_eventCallback((unsigned int)EventType::WindowRedraw, 0, 0);
+			m_eventCallback(static_cast<unsigned int>(EventType::WindowRedraw), 0, 0);
 		}
 
 		unsigned short x = LOWORD(lParam);
@@ -72,39 +71,39 @@ namespace SClick::Core::Window::OSWindow
 		// LEFT MOUSE BUTTON //
 		if (uMsg == WM_LBUTTONDOWN)
 		{
-			m_eventCallback((unsigned int)EventType::MouseButtonDown | LMouseDownCode, x, y);
+			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonDown) | LMouseDownCode, x, y);
 		}
 
 		if (uMsg == WM_LBUTTONUP)
 		{
-			m_eventCallback((unsigned int)EventType::MouseButtonUp | LMouseUpCode, x, y);
+			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonUp) | LMouseUpCode, x, y);
 		}
 
 		// RIGHT MOUSE BUTTON //
 		if (uMsg == WM_RBUTTONDOWN)
 		{
-			m_eventCallback((unsigned int)EventType::MouseButtonDown | RMouseDownCode, x, y);
+			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonDown) | RMouseDownCode, x, y);
 		}
 
 		if (uMsg == WM_RBUTTONUP)
 		{
-			m_eventCallback((unsigned int)EventType::MouseButtonUp | RMouseUpCode, x, y);
+			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonUp) | RMouseUpCode, x, y);
 		}
 
 		 // MIDDLE MOUSE BUTTON //
 		if (uMsg == WM_MBUTTONDOWN)
 		{
-			m_eventCallback((unsigned int)EventType::MouseButtonDown | MMouseDownCode, x, y);
+			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonDown) | MMouseDownCode, x, y);
 		}
 
 		if (uMsg == WM_MBUTTONUP)
 		{
-			m_eventCallback((unsigned int)EventType::MouseButtonUp | MMouseUpCode, x, y);
+			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonUp) | MMouseUpCode, x, y);
 		}
 
 		/*
 		In case of EventType::KeyPress, highWord is the KeyCode to be translated
-		lowWord indicates a repeat event. This is just for logging purposes.
+		lowWord indicates a repeat event. lowWord is just for logging purposes.
 		*/
 		if (uMsg == WM_KEYDOWN)
 		{
@@ -116,9 +115,9 @@ namespace SClick::Core::Window::OSWindow
 			std::uint64_t bit = bitMask & lParam;
 
 			if (bit != 0)
-				m_eventCallback((unsigned int)EventType::KeyRepeat, static_cast<unsigned short>(wParam), 1);
+				m_eventCallback(static_cast<unsigned int>(EventType::KeyRepeat), static_cast<unsigned short>(wParam), 1);
 			else
-				m_eventCallback((unsigned int)EventType::KeyPress, static_cast<unsigned short>(wParam), 0);
+				m_eventCallback(static_cast<unsigned int>(EventType::KeyPress), static_cast<unsigned short>(wParam), 0);
 		}
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);

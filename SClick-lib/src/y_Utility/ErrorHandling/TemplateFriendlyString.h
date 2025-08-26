@@ -15,7 +15,7 @@ namespace SClick::Core::DataType::ErrorHandling
 		{
 			for (int i = 0; i < size; i++)
 			{
-				string[i] = '\0';
+				string[i] = ' ';
 			}
 		}
 
