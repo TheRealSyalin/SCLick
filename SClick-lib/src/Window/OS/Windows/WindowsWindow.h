@@ -2,34 +2,43 @@
 
 #include <Windows.h>
 
-#include "../I_OSWindow.h"
 #include "../../../EventSystem/EventSystem.h"
 
 namespace SClick::Core::Window::OSWindow
 {
-
-	class WindowsWindow : public I_OSWindow
+	class WindowsWindow
 	{
+
+	private:
+		HWND m_handle;
+		std::function<void(
+			unsigned int bigWord,
+			unsigned short smallWord1,
+			unsigned short smallWord2)> m_eventCallback;
+		char* m_windowName = "Fuck";
+		short m_width, m_height;
 	
 	public:
 		WindowsWindow();
-		WindowsWindow(char* p_windowName, unsigned int p_width, unsigned int p_height);
+		WindowsWindow(char* p_windowName, unsigned short p_width, unsigned short p_height);
 		~WindowsWindow();
 
 	public:
-		int SCreateWindow() override;
-		void HandleMessages() override;
-		void* GetWindowHandle() override;
-		void SetParentWindow(void* p_parent) override;
+		int SCreateWindow();
+		void HandleMessages();
+		void* GetWindowHandle();
+		void SetParentWindow(void* p_parent);
 		void SetEventCallback(std::function<void(
-			unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)> func) override;
+			unsigned int bigWord,
+			unsigned short smallWord1,
+			unsigned short smallWord2)> func);
+		unsigned short GetWidth();
+		unsigned short GetHeight();
 
 	public:
 		LRESULT ThisWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	private:
-		HWND m_handle;
-
+	
 	private:
 		static LRESULT WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};

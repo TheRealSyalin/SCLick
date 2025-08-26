@@ -23,6 +23,7 @@ workspace "SClick-DrawingProgram"
 	   cppdialect "c++17"
 	   links {"SClick-lib"}
 	   targetdir "bin/%{cfg.buildcfg}"
+	   objdir "SClick/obj/%{cfg.buildcfg}"
 	   files { "SClick/src/**.h", "SClick/src/**.cpp" }
 	   architecture "x86_64"
 	   defines { "UNICODE" }
@@ -40,8 +41,9 @@ workspace "SClick-DrawingProgram"
 		kind "StaticLib"
 		language "C++"
 		cppdialect "c++17"
-		links {"d2d1"}
+		links {"d2d1", "d3d11"}
 		targetdir "bin/%{cfg.buildcfg}"
+		objdir "SClick-lib/obj/%{cfg.buildcfg}"
 		files { "SClick-lib/src/**.h", "SClick-lib/src/**.cpp" }
 	    architecture "x86_64"
 	    defines { "UNICODE" }
@@ -50,7 +52,7 @@ workspace "SClick-DrawingProgram"
 			pchsource "SClick-lib/src/z_pch/pch.cpp"
 
 	    includedirs {
-		   "SClick-lib/src/z_pch",
+		    "SClick-lib/src/z_pch",
 	   }
 	
 	

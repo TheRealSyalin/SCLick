@@ -4,27 +4,26 @@
 namespace SClick::Core::Window::OSWindow
 {
 	WindowsWindow::WindowsWindow()
-		:m_handle(0)
+		:m_handle(0), m_width(100), m_height(100)
 	{
-		m_EventCallback = NULL;
+		m_eventCallback = nullptr;
 	}
 
-	WindowsWindow::WindowsWindow(char* p_windowName, unsigned int p_width, unsigned int p_height)
-		:m_handle(0)
+	WindowsWindow::WindowsWindow(char* p_windowName, unsigned short p_width, unsigned short p_height)
+		:m_handle(0), m_width(p_width), m_height(p_height), m_eventCallback(nullptr)
 	{
 		m_windowName = p_windowName;
-		m_width = p_width;
-		m_height = p_height;
-		m_isRunning = true;
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
+		m_eventCallback = nullptr;
 	}
 
 	LRESULT WindowsWindow::ThisWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		
+		assert(m_eventCallback);
+
 		if (uMsg == WM_CLOSE)
 		{
 			DestroyWindow(hwnd);
@@ -33,7 +32,7 @@ namespace SClick::Core::Window::OSWindow
 
 		if (uMsg == WM_DESTROY)
 		{
-			m_EventCallback((unsigned int)EventType::WindowDestroy, 0, 0);
+			m_eventCallback((unsigned int)EventType::WindowDestroy, 0, 0);
 
 			PostQuitMessage(0);
 
@@ -42,92 +41,65 @@ namespace SClick::Core::Window::OSWindow
 
 		if (uMsg == WM_PAINT)
 		{
-			m_EventCallback((unsigned int)EventType::WindowRedraw, 0, 0);
+			m_eventCallback((unsigned int)EventType::WindowRedraw, 0, 0);
 		}
+
+		unsigned short x = LOWORD(lParam);
+		unsigned short y = HIWORD(lParam);
 
 		if (uMsg == WM_SIZE)
 		{
-			unsigned short width = LOWORD(lParam);
-			unsigned short height = HIWORD(lParam);
-
-			m_width = width;
-			m_height = height;
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::WindowResize, width, height);
+			m_width = x;
+			m_height = y;
+			//m_eventCallback((unsigned int)EventType::WindowResize, x, y);
 
 			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
 
-		unsigned int LMouseCode = MouseButtons::LMOUSE << 16;
-		unsigned int RMouseCode = MouseButtons::RMOUSE << 16;
-		unsigned int MMouseCode = MouseButtons::MMOUSE << 16;
+		//bit shift the MouseButton code left by 16 to | it with the event type
+		unsigned int LMouseDownCode = MouseButtons::LMOUSEDOWN << 16;
+		unsigned int RMouseDownCode = MouseButtons::RMOUSEDOWN << 16;
+		unsigned int MMouseDownCode = MouseButtons::MMOUSEDOWN << 16;
+		unsigned int LMouseUpCode = MouseButtons::LMOUSEUP << 16;
+		unsigned int RMouseUpCode = MouseButtons::RMOUSEUP << 16;
+		unsigned int MMouseUpCode = MouseButtons::MMOUSEUP << 16;
 
 		if (uMsg == WM_MOUSEMOVE)
 		{
-
-			unsigned short x = LOWORD(lParam);
-			unsigned short y = HIWORD(lParam);
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::MouseMove, x, y);
+			m_eventCallback((unsigned int)EventType::MouseMove, x, y);
 		}
 
 		// LEFT MOUSE BUTTON //
 		if (uMsg == WM_LBUTTONDOWN)
 		{
-			unsigned short x = LOWORD(lParam);
-			unsigned short y = HIWORD(lParam);
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::MouseButtonDown | LMouseCode, x, y);
+			m_eventCallback((unsigned int)EventType::MouseButtonDown | LMouseDownCode, x, y);
 		}
 
 		if (uMsg == WM_LBUTTONUP)
 		{
-			unsigned short x = LOWORD(lParam);
-			unsigned short y = HIWORD(lParam);
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::MouseButtonUp | LMouseCode, x, y);
+			m_eventCallback((unsigned int)EventType::MouseButtonUp | LMouseUpCode, x, y);
 		}
 
 		// RIGHT MOUSE BUTTON //
 		if (uMsg == WM_RBUTTONDOWN)
 		{
-			unsigned short x = LOWORD(lParam);
-			unsigned short y = HIWORD(lParam);
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::MouseButtonDown | RMouseCode, x, y);
+			m_eventCallback((unsigned int)EventType::MouseButtonDown | RMouseDownCode, x, y);
 		}
 
 		if (uMsg == WM_RBUTTONUP)
 		{
-			unsigned short x = LOWORD(lParam);
-			unsigned short y = HIWORD(lParam);
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::MouseButtonUp | RMouseCode, x, y);
+			m_eventCallback((unsigned int)EventType::MouseButtonUp | RMouseUpCode, x, y);
 		}
 
 		 // MIDDLE MOUSE BUTTON //
 		if (uMsg == WM_MBUTTONDOWN)
 		{
-			unsigned short x = LOWORD(lParam);
-			unsigned short y = HIWORD(lParam);
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::MouseButtonDown | MMouseCode, x, y);
+			m_eventCallback((unsigned int)EventType::MouseButtonDown | MMouseDownCode, x, y);
 		}
 
 		if (uMsg == WM_MBUTTONUP)
 		{
-			unsigned short x = LOWORD(lParam);
-			unsigned short y = HIWORD(lParam);
-
-			if (m_EventCallback)
-				m_EventCallback((unsigned int)EventType::MouseButtonUp | MMouseCode, x, y);
+			m_eventCallback((unsigned int)EventType::MouseButtonUp | MMouseUpCode, x, y);
 		}
 
 		/*
@@ -140,13 +112,13 @@ namespace SClick::Core::Window::OSWindow
 			WinUser.h offers ways to get the repeat bit,
 			but i like doing it myself cuz im tired of looking at capital letters.
 			*/
-			unsigned long long bitMask = static_cast<unsigned long long>(1) << 30;
-			unsigned long long bit = bitMask & lParam;
+			std::uint64_t bitMask = static_cast<std::uint64_t>(1) << 30;
+			std::uint64_t bit = bitMask & lParam;
 
 			if (bit != 0)
-				m_EventCallback((unsigned int)EventType::KeyRepeat, static_cast<unsigned short>(wParam), 1);
+				m_eventCallback((unsigned int)EventType::KeyRepeat, static_cast<unsigned short>(wParam), 1);
 			else
-				m_EventCallback((unsigned int)EventType::KeyPress, static_cast<unsigned short>(wParam), 0);
+				m_eventCallback((unsigned int)EventType::KeyPress, static_cast<unsigned short>(wParam), 0);
 		}
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -159,7 +131,6 @@ namespace SClick::Core::Window::OSWindow
 		auto ptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
 		if (ptr)
 			window = reinterpret_cast<WindowsWindow*>(ptr);
-
 
 		if (uMsg == WM_CREATE)
 		{
@@ -186,10 +157,8 @@ namespace SClick::Core::Window::OSWindow
 
 		RegisterClass(&wc);
 
-		int clen = static_cast<int>(std::strlen(m_windowName)) + 1;
-		int wclen = sizeof(char) * clen;
-		wchar_t* windowName = new wchar_t[wclen];
-		MultiByteToWideChar(CP_UTF8, 0, m_windowName, clen, windowName, wclen);
+		wchar_t windowName[256];
+		MultiByteToWideChar(CP_UTF8, 0, m_windowName, -1, windowName, 256);
 
 		m_handle = CreateWindowEx(0,
 			CLASSNAME, 
@@ -199,9 +168,6 @@ namespace SClick::Core::Window::OSWindow
 			hInstance, 
 			this);
 
-		delete[] windowName;
-		windowName = nullptr;
-
 		ShowWindow(m_handle, SW_SHOWDEFAULT);
 
 		return 0;
@@ -210,9 +176,12 @@ namespace SClick::Core::Window::OSWindow
 	void WindowsWindow::HandleMessages()
 	{
 		MSG o_msg;
-		PeekMessage(&o_msg, m_handle, 0, 0, PM_REMOVE);
-		TranslateMessage(&o_msg);
-		DispatchMessage(&o_msg);
+
+		while (PeekMessage(&o_msg, m_handle, 0, 0, PM_REMOVE) != 0)
+		{
+			TranslateMessage(&o_msg);
+			DispatchMessage(&o_msg);
+		}
 	}
 
 	void* WindowsWindow::GetWindowHandle()
@@ -228,6 +197,14 @@ namespace SClick::Core::Window::OSWindow
 	void WindowsWindow::SetEventCallback(std::function<void(
 		unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)> func)
 	{
-		m_EventCallback = func;
+		m_eventCallback = func;
+	}
+	unsigned short WindowsWindow::GetWidth()
+	{
+		return m_width;
+	}
+	unsigned short WindowsWindow::GetHeight()
+	{
+		return m_height;
 	}
 }

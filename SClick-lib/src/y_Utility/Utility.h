@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Logging/Debug.h"
-#include "DataTypes/Vector2.h"
-#include "DataTypes/Rect.h"
-#include "DataTypes/Color.h"
+#include "Func/MiscFunctions.h"
+
+#include "ErrorHandling\Result.h"
+#include "ErrorHandling\TemplateFriendlyString.h"

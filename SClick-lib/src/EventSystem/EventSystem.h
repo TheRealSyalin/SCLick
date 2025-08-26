@@ -1,5 +1,4 @@
 #pragma once
 
-#include "Events\EventTypes.h"
-
-#include "EventManager\EventManager.h"
+#include "EventSrc/EventTypes.h"
+#include "EventSrc/EventManager.h"

@@ -1,5 +1,5 @@
 #pragma once
 
-#include "Renderer.h"
-#include "Control.h"
+#include "RendererSrc/Texture.h"
+#include "SClickRenderCalls.h"
 

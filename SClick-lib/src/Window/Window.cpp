@@ -5,17 +5,15 @@
 
 namespace SClick::Core::Window
 {
-	Window::Window()
-	{
-		window = nullptr;
-	}
-
-	Window::Window(char* p_windowName, unsigned int p_width, unsigned int p_hieght, EventSystem::EventManager& manager)
+	Window::Window(
+		char* p_windowName, 
+		unsigned int p_width, 
+		unsigned int p_hieght, 
+		std::function<void(unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)> p_eventHandlerCallback)
 	{
 		window = new SCLICKWINDOW(p_windowName, p_width, p_hieght);
-		window->SetEventCallback([&manager](unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord) {
-			manager.GetEventCollector().PostEvent(eventTypeWord, highWord, lowWord);
-			});
+
+		window->SetEventCallback(p_eventHandlerCallback);
 
 		window->SCreateWindow();
 	}
@@ -47,11 +45,6 @@ namespace SClick::Core::Window
 	{
 		return window->GetHeight();
 	}
-
-    bool& Window::IsRunning()
-    {
-        return window->m_isRunning;
-    }
 
 	void* Window::GetWindowHandle()
 	{

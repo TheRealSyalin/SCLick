@@ -10,15 +10,15 @@
 #define SCLICKWINDOW SClick::Core::Window::OSWindow::LinuxWindow
 #endif
 
-
+#include <functional>
 
 namespace SClick::Core::Window
 {
 	class Window
 	{
 	public:
-		Window();
-		Window(char* p_windowName, unsigned int p_width, unsigned int p_hieght, EventSystem::EventManager& manager);
+		Window(char* p_windowName, unsigned int p_width, unsigned int p_hieght, 
+			std::function<void(unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)> p_eventHandlerCallback);
 
 		~Window();
 
@@ -29,7 +29,6 @@ namespace SClick::Core::Window
 	public:
 		unsigned int GetWidth();
 		unsigned int GetHeight();
-		bool& IsRunning();
 		void* GetWindowHandle();
 		void SetParentWindow(void* p_parent);
 

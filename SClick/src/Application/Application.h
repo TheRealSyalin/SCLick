@@ -4,124 +4,113 @@
 #include <thread>
 #include <chrono>
 
-#include "Core.h"
+#include "SClickCore.h"
+#include "Gui.h"
+
+#define TIMERS 1
+
+//TODO: Replace cout with logging system that isnt slow as balls
+#if TIMERS
+static SClick::Core::Utility::Debug::Timer eventTimer;
+
+#define START_EVENT_TIMER eventTimer.Start();
+#define END_EVENT_TIMER std::cout << eventTimer.End().count() << "\n";
+#else
+#define START_EVENT_TIMER
+#define END_EVENT_TIMER 
+#endif
 
 namespace SClick::Application
 {
-	inline void Run(Core::Window::Window& window, SClick::Core::Renderer::Renderer renderer, Core::EventSystem::EventManager& mainWindowEventManager)
+	void Run(Core::Window::Window& window, Core::EventSystem::EventManager& windowEventManager)
 	{
 		bool isRunning = true;
 
 		double lastTime = 0;
-		double accumulateOneSecond = 0;
+		double accumulate = 0;
 
-		Core::Utility::Timer::Timer timer;
-		Core::Utility::Timer::Timer eventTimer;
+		unsigned char shift = 1;
+		double t = 0;
 
-		//------------Create UI------------//
-		
-		Core::Renderer::Control::Control control = { Core::Utility::Rect(100, 100, 0, 0), Core::Utility::Color(1, 1, 1),
-			mainWindowEventManager};
-
-		Core::Renderer::Control::Control buttonControl = { &control, Core::Utility::Rect(0, 0, 300, 300), Core::Utility::Color(1, 1, 1),
-			mainWindowEventManager};
-
-		//Core::Renderer::Layer::Layer GUILayer = new Layer();
-		//Core::Renderer::Layer::Layer CanvasLayer = new Layer();
-
-		//GUILayer.push(buttonControl);
+		Core::Utility::Debug::Timer timer;
 
 		//------------Create UI------------//
+
+		std::vector<SClick::Core::Renderer::Texture> textures;
 
 		while (isRunning)
 		{
-			timer.Start();
-			const double delta = (lastTime - timer.Probe().count()) / 1000;
-			accumulateOneSecond += delta;
+			START_EVENT_TIMER
 
-			if (accumulateOneSecond >= 1)
-			{
-				//std::cout << "\r" << "FPS: " << (int)(1 / delta) << " ";
-				accumulateOneSecond = 0;
-			}
+			timer.Start();
+			const double delta = (lastTime - timer.Probe().count());
+
+			accumulate += delta;
+
 
 			window.Update();
 
-			//eventTimer.Start();
 			//------------Event Loop------------//
-			while (!mainWindowEventManager.GetEventCollector().GetEventQueue().IsEmpty())
+			while (!windowEventManager.GetEventQueue().IsEmpty())
 			{
-				buttonControl.OnClick(MouseButtons::LMOUSE, true);
-				buttonControl.OnClick(MouseButtons::RMOUSE, true);
-				buttonControl.OnClick(MouseButtons::MMOUSE, true);
-				buttonControl.OnHover();
+				//-----GLOBAL EVENTS-----//
 
-
-
-				mainWindowEventManager.HandleEvent(EventType::WindowRedraw, [](unsigned short _1, unsigned short _2)
+				windowEventManager.HandleEvent(EventType::WindowRedraw, [&textures](unsigned short _1, unsigned short _2)
 					{
-						//renderer.Clear();
-
-						//renderer.Draw(CanvasLayer);
-						//renderer.Draw(GUILayer);
-						
-						//renderer.Display();
-
-						std::cout << "PAINT" << std::endl;
 						return true;
 					});
 
-				mainWindowEventManager.HandleEvent(EventType::WindowResize, [](unsigned short _1, unsigned short _2)
+				windowEventManager.HandleEvent(EventType::WindowResize, [](unsigned short _1, unsigned short _2)
 					{
 						std::cout << _1 << ", " << _2 << std::endl;
 						return true;
 					});
 
-				mainWindowEventManager.HandleEvent(EventType::WindowDestroy, [&isRunning](unsigned short _1, unsigned short _2)
+				windowEventManager.HandleEvent(EventType::WindowDestroy, [&isRunning](unsigned short _1, unsigned short _2)
 					{
 						std::cout << "Quit" << std::endl;
 						isRunning = false;
 						return true;
 					});
 
-				mainWindowEventManager.HandleEvent(EventType::MouseMove, [](unsigned short _1, unsigned short _2)
+				windowEventManager.PassthroughEvent(EventType::MouseMove, [](unsigned short _1, unsigned short _2)
 					{
-						std::cout << _1 << ", " << _2 << " 1" << std::endl;
+						//std::cout << _1 << ", " << _2 << " 1" << std::endl;
+					});
+
+				windowEventManager.HandleEvent(EventType::KeyPress, [](unsigned short _1, unsigned short _2)
+					{
+						//std::cout << (char)_1 << std::endl;
 						return true;
 					});
 
-				mainWindowEventManager.HandleEvent(EventType::KeyPress, [](unsigned short _1, unsigned short _2)
-					{
-						std::cout << (char)_1 << std::endl;
-						if (_1 == KeyCodes::ENTER)
-							std::cout << "\n";
 
-						return true;
-					});
+				//-----APPLICATION EVENTS-----//
 
-				mainWindowEventManager.HandleEvent(EventType::KeyRepeat, [](unsigned short _1, unsigned short _2)
-					{
-						std::cout << (char)_1 << " " << _2;
-						if (_1 == KeyCodes::ENTER)
-							std::cout << "\n";
-
-						return true;
-					});
-
-				mainWindowEventManager.GetEventCollector().GetEventQueue().Dequeue();
+				windowEventManager.GetEventQueue().Dequeue();
 			}
-			//std::cout << eventTimer.End().count() << std::endl;
 
+
+
+				//-----GFX-----//
+			if (accumulate > 6.94)
 			{
-				using namespace std::chrono_literals;
+				Core::Renderer::SCRender_BeginDraw();
 
-				unsigned long long sleepTime = (unsigned long long)16 - (unsigned long long)delta;
-				//std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
+				Core::Renderer::SCRender_ClearFrame();
+
+				Core::Renderer::SCRender_DrawRect({ 0,0,500,500 }, { 255,0,0, 255 });
+
+				Core::Renderer::SCRender_EndDraw();
+
+				Core::Renderer::SCRender_PresentFrame();
+
+				accumulate = 0;
 			}
 
-
-			//std::cout << timer.End().count() << std::endl;
+			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			lastTime = timer.End().count();
-		} 
+			END_EVENT_TIMER
+		}
 	}
 }
