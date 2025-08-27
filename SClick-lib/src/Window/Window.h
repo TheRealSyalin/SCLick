@@ -11,6 +11,7 @@
 #endif
 
 #include <functional>
+#include <tuple>
 
 namespace SClick::Core::Window
 {
@@ -27,8 +28,7 @@ namespace SClick::Core::Window
 		void CleanUp();
 
 	public:
-		unsigned int GetWidth();
-		unsigned int GetHeight();
+		std::pair<unsigned int, unsigned int> GetSize();
 		void* GetWindowHandle();
 		void SetParentWindow(void* p_parent);
 

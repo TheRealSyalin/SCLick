@@ -1,6 +1,5 @@
 #pragma once
 
-#include <expected>
 
 namespace SClick::Core::DataType::ErrorHandling
 {

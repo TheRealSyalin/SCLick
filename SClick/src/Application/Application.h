@@ -7,7 +7,7 @@
 #include "SClickCore.h"
 #include "Gui.h"
 
-#define TIMERS 1
+#define TIMERS 0
 
 //TODO: Replace cout with logging system that isnt slow as balls
 #if TIMERS
@@ -63,7 +63,7 @@ namespace SClick::Application
 
 				windowEventManager.HandleEvent(EventType::WindowResize, [](unsigned short _1, unsigned short _2)
 					{
-						std::cout << _1 << ", " << _2 << std::endl;
+						//std::cout << _1 << ", " << _2 << std::endl;
 						return true;
 					});
 
@@ -76,7 +76,7 @@ namespace SClick::Application
 
 				windowEventManager.PassthroughEvent(EventType::MouseMove, [](unsigned short _1, unsigned short _2)
 					{
-						//std::cout << _1 << ", " << _2 << " 1" << std::endl;
+						std::cout << _1 << ", " << _2 << " 1" << std::endl;
 					});
 
 				windowEventManager.HandleEvent(EventType::KeyPress, [](unsigned short _1, unsigned short _2)

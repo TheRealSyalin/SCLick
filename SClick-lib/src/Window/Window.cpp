@@ -36,14 +36,9 @@ namespace SClick::Core::Window
 		window = nullptr;
 	}
 
-	unsigned int Window::GetWidth()
+	std::pair<unsigned int, unsigned int> Window::GetSize()
 	{
-		return window->GetWidth();
-	}
-
-	unsigned int Window::GetHeight()
-	{
-		return window->GetHeight();
+		return { window->GetWidth(), window->GetHeight() };
 	}
 
 	void* Window::GetWindowHandle()

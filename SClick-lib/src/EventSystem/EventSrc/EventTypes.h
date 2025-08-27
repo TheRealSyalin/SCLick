@@ -15,7 +15,7 @@ enum class EventType : unsigned int
 	MouseScroll,
 	MouseMove,
 
-	WindowEvent,
+	WindowMove,
 	WindowResize,
 	WindowDestroy,
 	WindowRedraw

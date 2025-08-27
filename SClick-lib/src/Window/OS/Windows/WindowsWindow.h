@@ -32,8 +32,8 @@ namespace SClick::Core::Window::OSWindow
 			unsigned int bigWord,
 			unsigned short smallWord1,
 			unsigned short smallWord2)> func);
-		unsigned short GetWidth();
-		unsigned short GetHeight();
+		const unsigned short GetWidth();
+		const unsigned short GetHeight();
 
 	public:
 		LRESULT ThisWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

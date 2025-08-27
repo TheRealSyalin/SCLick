@@ -41,6 +41,7 @@ namespace SClick::Core::Window::OSWindow
 		if (uMsg == WM_PAINT)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::WindowRedraw), 0, 0);
+				return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
 
 		unsigned short x = LOWORD(lParam);
@@ -50,9 +51,15 @@ namespace SClick::Core::Window::OSWindow
 		{
 			m_width = x;
 			m_height = y;
-			//m_eventCallback((unsigned int)EventType::WindowResize, x, y);
+			m_eventCallback((unsigned int)EventType::WindowResize, x, y);
 
-			return DefWindowProc(hwnd, uMsg, wParam, lParam);
+			return 0;
+		}
+
+		if (uMsg == WM_MOVE)
+		{
+			m_eventCallback((unsigned int)EventType::WindowMove, x, y);
+			return 0;
 		}
 
 		//bit shift the MouseButton code left by 16 to | it with the event type
@@ -66,39 +73,46 @@ namespace SClick::Core::Window::OSWindow
 		if (uMsg == WM_MOUSEMOVE)
 		{
 			m_eventCallback((unsigned int)EventType::MouseMove, x, y);
+			return 0;
 		}
 
 		// LEFT MOUSE BUTTON //
 		if (uMsg == WM_LBUTTONDOWN)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonDown) | LMouseDownCode, x, y);
+			return 0;
 		}
 
 		if (uMsg == WM_LBUTTONUP)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonUp) | LMouseUpCode, x, y);
+			return 0;
 		}
 
 		// RIGHT MOUSE BUTTON //
 		if (uMsg == WM_RBUTTONDOWN)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonDown) | RMouseDownCode, x, y);
+			return 0;
 		}
 
 		if (uMsg == WM_RBUTTONUP)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonUp) | RMouseUpCode, x, y);
+			return 0;
 		}
 
 		 // MIDDLE MOUSE BUTTON //
 		if (uMsg == WM_MBUTTONDOWN)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonDown) | MMouseDownCode, x, y);
+			return 0;
 		}
 
 		if (uMsg == WM_MBUTTONUP)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::MouseButtonUp) | MMouseUpCode, x, y);
+			return 0;
 		}
 
 		/*
@@ -118,6 +132,8 @@ namespace SClick::Core::Window::OSWindow
 				m_eventCallback(static_cast<unsigned int>(EventType::KeyRepeat), static_cast<unsigned short>(wParam), 1);
 			else
 				m_eventCallback(static_cast<unsigned int>(EventType::KeyPress), static_cast<unsigned short>(wParam), 0);
+
+			return 0;
 		}
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -140,6 +156,8 @@ namespace SClick::Core::Window::OSWindow
 
 		if(window)
 			return window->ThisWindowProc(hwnd, uMsg, wParam, lParam);
+
+
 
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
@@ -198,11 +216,11 @@ namespace SClick::Core::Window::OSWindow
 	{
 		m_eventCallback = func;
 	}
-	unsigned short WindowsWindow::GetWidth()
+	const unsigned short WindowsWindow::GetWidth()
 	{
 		return m_width;
 	}
-	unsigned short WindowsWindow::GetHeight()
+	const unsigned short WindowsWindow::GetHeight()
 	{
 		return m_height;
 	}
