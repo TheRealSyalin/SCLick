@@ -4,8 +4,8 @@
 #include <thread>
 #include <chrono>
 
-#include "SClickCore.h"
-#include "Gui.h"
+#include "sclickcore.h"
+#include "gui.h"
 
 #define TIMERS 0
 
@@ -76,15 +76,19 @@ namespace SClick::Application
 
 				windowEventManager.PassthroughEvent(EventType::MouseMove, [](unsigned short _1, unsigned short _2)
 					{
-						std::cout << _1 << ", " << _2 << " 1" << std::endl;
+						//std::cout << _1 << ", " << _2 << " 1" << std::endl;
 					});
 
 				windowEventManager.HandleEvent(EventType::KeyPress, [](unsigned short _1, unsigned short _2)
 					{
-						//std::cout << (char)_1 << std::endl;
+						std::cout << (char)_1 << std::endl;
 						return true;
 					});
 
+				auto [button, coord] = windowEventManager.GetMouseButton();
+
+				if(button == MouseButtons::LMOUSEDOWN)
+					std::cout << button << std::endl;
 
 				//-----APPLICATION EVENTS-----//
 

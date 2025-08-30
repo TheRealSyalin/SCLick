@@ -1,4 +1,4 @@
-workspace "SClick-DrawingProgram"
+workspace "sclick-DrawingProgram"
    configurations { "Debug", "Release" }
 
 
@@ -16,43 +16,49 @@ workspace "SClick-DrawingProgram"
 		filter "system:linux"
 			defines {"LINUX"}
 
-	project "SClick"
-	location "SClick"
+	project "sclick"
+	location "sclick"
 	   kind "ConsoleApp"
 	   language "C++"
 	   cppdialect "c++17"
-	   links {"SClick-lib"}
+	   links {"sclick-lib"}
 	   targetdir "bin/%{cfg.buildcfg}"
-	   objdir "SClick/obj/%{cfg.buildcfg}"
-	   files { "SClick/src/**.h", "SClick/src/**.cpp" }
+	   objdir "sclick/obj/%{cfg.buildcfg}"
+	   files { "sclick/src/**.h", "sclick/src/**.cpp" }
 	   architecture "x86_64"
 	   defines { "UNICODE" }
 
 	   --pchheader "pch.h"
-	   --pchsource "SClick/src/z_pch/pch.cpp"
+	   --pchsource "sclick/src/z_pch/pch.cpp"
 
 	   includedirs {
-		   "SClick-lib/include",
-		   --"SClick/src/z_pch",
+		   "sclick-lib/include",
+		   "sclick-lib/src"
+		   --"sclick/src/z_pch",
 	   }
 
-	 project "SClick-lib"
-	    location "SClick-lib"
+	 project "sclick-lib"
+	    location "sclick-lib"
 		kind "StaticLib"
 		language "C++"
 		cppdialect "c++17"
 		links {"d2d1", "d3d11"}
 		targetdir "bin/%{cfg.buildcfg}"
-		objdir "SClick-lib/obj/%{cfg.buildcfg}"
-		files { "SClick-lib/src/**.h", "SClick-lib/src/**.cpp" }
+		objdir "sclick-lib/obj/%{cfg.buildcfg}"
+		files { "sclick-lib/src/**.h", "sclick-lib/src/**.cpp" }
 	    architecture "x86_64"
 	    defines { "UNICODE" }
 
 			pchheader "pch.h"
-			pchsource "SClick-lib/src/z_pch/pch.cpp"
+			pchsource "sclick-lib/src/z_pch/pch.cpp"
 
 	    includedirs {
-		    "SClick-lib/src/z_pch",
+		    "sclick-lib/src/z_pch",
+			"sclick-lib/src",
+	   }
+
+	   externalincludedirs {
+		"sclick-lib/src"
 	   }
 	
 	

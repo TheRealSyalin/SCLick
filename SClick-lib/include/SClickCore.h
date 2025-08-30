@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../src/Window/Window.h"
-#include "../src/EventSystem/EventSystem.h"
-#include "../src/Renderer/RenderSystem.h"
-
-#include "../src/y_Utility/Debug.h"
-#include "../src/DataTypes/DataTypes.h"
-
+#include "../src/sclick/window/Window.h"
+#include "../src/sclick/eventsystem/eventsystem.h"
+#include "../src/sclick/renderer/rendersystem.h"
+#include "../src/sclick/datatypes/datatypes.h"
+#include "../src/sclick/y_utility/utility.h"
+#include "../src/sclick/y_utility/debug.h"

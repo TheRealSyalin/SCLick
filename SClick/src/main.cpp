@@ -1,6 +1,6 @@
 #include <cassert>
 
-#include "Application/Application.h"
+#include "application\application.h"
 
 int main()
 {
@@ -10,7 +10,8 @@ int main()
 	Core::Window::Window window = { "SClick", 1920, 1080, windowEventManager.GetEventCallback()};
 
 	Core::Renderer::SCRender_Init(window.GetWindowHandle());
-	assert(Core::Renderer::SCRender_GetStatus() == 0);
+	if (Core::Renderer::SCRender_GetStatus() != 0)
+		return 420;
 	Application::Run(window, windowEventManager);
 	Core::Renderer::SCRender_Shutdown();
 }
