@@ -77,15 +77,12 @@ namespace SClick::Core::Renderer::Internal
 
 	DataType::ErrorHandling::Result<int, DataType::ErrorHandling::TemplateFriendlyString<255>> DX2DResourceCreator::Init()
 	{
-		DataType::ErrorHandling::Result<int, DataType::ErrorHandling::TemplateFriendlyString<255>> result = {};
 
 		HRESULT hr = S_OK;
 
 		if (!m_handle)
 		{
-			result.isError = true;
-			result.error = "No Window Handle";
-			return result;
+			return "No Window Handle";
 		}
 
 		//Create DX3D device and DX3D Context
@@ -116,9 +113,7 @@ namespace SClick::Core::Renderer::Internal
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "D3D11CreateDevice Failed";
-			return result;
+			return "D3D11CreateDevice Failed";
 		}
 
 		//Create DXGI Device
@@ -126,9 +121,7 @@ namespace SClick::Core::Renderer::Internal
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "m_3DDevice->QueryInterface Failed";
-			return result;
+			return "m_3DDevice->QueryInterface Failed";
 		}
 
 		//Create DXGI factory and Adapter
@@ -141,9 +134,7 @@ namespace SClick::Core::Renderer::Internal
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "D2D1CreateFactory Failed";
-			return result;
+			return "D2D1CreateFactory Failed";
 		}
 
 		//Create DX2D device
@@ -151,20 +142,16 @@ namespace SClick::Core::Renderer::Internal
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "m_factory->CreateDevice Failed";
-			return result;
-		}
+			return "m_factory->CreateDevice Failed";
+					}
 
 		//Create Dx2D Device Context
 		hr = m_device->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_context);
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "m_device->CreateDeviceContext Failed";
-			return result;
-		}
+			return "m_device->CreateDeviceContext Failed";
+					}
 
 		//Create Swap Chain
 		DXGI_SWAP_CHAIN_DESC1 swapChainDesc = { 0 };
@@ -190,27 +177,21 @@ namespace SClick::Core::Renderer::Internal
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "m_dxgiFactory->CreateSwapChainForHwnd Failed";
-			return result;
+			return "m_dxgiFactory->CreateSwapChainForHwnd Failed";
 		}
 
 		hr = m_dxgiDevice->SetMaximumFrameLatency(1);
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "m_dxgiDevice->SetMaximumFrameLatency Failed";
-			return result;
+			return "m_dxgiDevice->SetMaximumFrameLatency Failed";
 		}
 
 		hr = m_swapchain->GetBuffer(0, IID_PPV_ARGS(&m_backbuffer));
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "m_swapchain->GetBuffer Failed";
-			return result;
+			return "m_swapchain->GetBuffer Failed";
 		}
 
 		auto windowDPI = GetDpiForWindow(m_handle);
@@ -228,18 +209,14 @@ namespace SClick::Core::Renderer::Internal
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = "m_swapchain->GetBuffer Failed";
-			return result;
-		}
+			return "m_swapchain->GetBuffer Failed";
+					}
 
 		hr = m_context->CreateBitmapFromDxgiSurface(m_dxgiBackbuffer, &bitmapProperties, &m_renderTargetBitmap);
 
 		if (hr != S_OK)
 		{
-			result.isError = true;
-			result.error = " m_context->CreateBitmapFromDxgiSurface Failed";
-			return result;
+			return " m_context->CreateBitmapFromDxgiSurface Failed";
 		}
 
 		m_context->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 0.3f), &m_brush);
@@ -247,8 +224,7 @@ namespace SClick::Core::Renderer::Internal
 
 		m_context->SetTarget(m_renderTargetBitmap);
 
-		result.value = 0;
-		return result;
+		return 0;
 	}
 
 	void DX2DResourceCreator::Shutdown()

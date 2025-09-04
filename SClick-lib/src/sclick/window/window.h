@@ -13,6 +13,8 @@
 #include <functional>
 #include <tuple>
 
+#include "sclick\window\windowsettings.h"
+
 namespace SClick::Core::Window
 {
 	class Window
@@ -23,9 +25,7 @@ namespace SClick::Core::Window
 	public:
 		Window(
 			char* p_windowName,
-			unsigned int p_width,
-			unsigned int p_hieght, 
-			std::function<void(unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)> p_eventHandlerCallback);
+			WindowSettings settings);
 		~Window();
 
 	public:
@@ -35,9 +35,12 @@ namespace SClick::Core::Window
 	public:
 		std::pair<unsigned int, unsigned int> GetSize();
 		void* GetWindowHandle();
+		void SetEventCallback(std::function<void(unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)>& p_eventHandlerCallback);
 		void SetParentWindow(void* p_parent);
 
 	public:
 		Window& operator=(Window&& other) noexcept;
 	};
 }
+
+

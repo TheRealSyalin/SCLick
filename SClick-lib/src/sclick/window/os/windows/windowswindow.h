@@ -2,11 +2,15 @@
 
 #include <Windows.h>
 #include <functional>
+
 #include "sclick/eventsystem/src/eventtypes.h"
+#include "sclick\window\windowsettings.h"
 
 
 namespace SClick::Core::Window::OSWindow
 {
+
+
 	class WindowsWindow
 	{
 
@@ -17,11 +21,11 @@ namespace SClick::Core::Window::OSWindow
 			unsigned short smallWord1,
 			unsigned short smallWord2)> m_eventCallback;
 		char* m_windowName = "Fuck";
-		short m_width, m_height;
-	
+		SClick::Core::Window::WindowSettings m_settings;
+
 	public:
 		WindowsWindow();
-		WindowsWindow(char* p_windowName, unsigned short p_width, unsigned short p_height);
+		WindowsWindow(char* p_windowName, SClick::Core::Window::WindowSettings p_settings);
 		~WindowsWindow();
 
 	public:
@@ -32,7 +36,7 @@ namespace SClick::Core::Window::OSWindow
 		void SetEventCallback(std::function<void(
 			unsigned int bigWord,
 			unsigned short smallWord1,
-			unsigned short smallWord2)> func);
+			unsigned short smallWord2)>& func);
 		const unsigned short GetWidth();
 		const unsigned short GetHeight();
 

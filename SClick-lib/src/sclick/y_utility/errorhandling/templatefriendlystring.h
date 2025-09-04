@@ -19,6 +19,15 @@ namespace SClick::Core::DataType::ErrorHandling
 			}
 		}
 
+		TemplateFriendlyString(const char* p_string)
+		{
+			auto len = strlen(p_string) + 1;
+			if (len > size)
+				return;
+
+			std::memcpy(&string, p_string, len);
+		}
+
 	public:
 		void Print()
 		{

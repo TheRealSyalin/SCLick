@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "sclick\Renderer\sclickrendercalls.h"
+#include "sclick\renderer\sclickrendercalls.h"
 #include "dx2dresourcecreator.h"
 
 //TODO: Look into ways to batch render operations together
@@ -29,13 +29,13 @@ namespace SClick::Core::Renderer
 		resources = { (HWND)window };
 
 		auto result = resources.Init();
-		if (!result.isError)
+		if (!result)
 		{
 			RenderError.currentCode = SClickRenderErrorCodes::None;
 			return;
 		}
 
-		result.error.Print();
+		result.GetError().Print();
 		RenderError.currentCode = SClickRenderErrorCodes::ResourceCreationError;
 	}
 

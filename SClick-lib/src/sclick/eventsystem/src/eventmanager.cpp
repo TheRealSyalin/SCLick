@@ -95,7 +95,7 @@ namespace SClick::Core::EventSystem
 		unsigned int msg = DecodeEventType(event);
 
 		unsigned char mouseButton = msg >> 16;
-		unsigned int eventType = msg & 0b00000000000000001111111111111111;
+		unsigned int eventType = msg & 0x0000ffff;
 
 		DataType::Vector2 mousePos{ 0,0 };
 

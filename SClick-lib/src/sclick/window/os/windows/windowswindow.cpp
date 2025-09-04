@@ -5,13 +5,13 @@
 namespace SClick::Core::Window::OSWindow
 {
 	WindowsWindow::WindowsWindow()
-		:m_handle(0), m_width(100), m_height(100)
+		:m_handle(0), m_settings({0})
 	{
 		m_eventCallback = nullptr;
 	}
 
-	WindowsWindow::WindowsWindow(char* p_windowName, unsigned short p_width, unsigned short p_height)
-		:m_handle(0), m_width(p_width), m_height(p_height), m_eventCallback(nullptr)
+	WindowsWindow::WindowsWindow(char* p_windowName, SClick::Core::Window::WindowSettings p_settings)
+		:m_handle(0), m_eventCallback(nullptr), m_settings(p_settings)
 	{
 		m_windowName = p_windowName;
 	}
@@ -23,22 +23,16 @@ namespace SClick::Core::Window::OSWindow
 
 	LRESULT WindowsWindow::ThisWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		assert(m_eventCallback);
+		if (!m_eventCallback)
+			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 
 		if (uMsg == WM_CLOSE)
 		{
-			DestroyWindow(hwnd);
-			return 0;
-		}
-
-		if (uMsg == WM_DESTROY)
-		{
 			m_eventCallback(static_cast<unsigned int>(EventType::WindowDestroy), 0, 0);
 
-			PostQuitMessage(0);
-
 			return 0;
 		}
+
 		if (uMsg == WM_PAINT)
 		{
 			m_eventCallback(static_cast<unsigned int>(EventType::WindowRedraw), 0, 0);
@@ -50,8 +44,8 @@ namespace SClick::Core::Window::OSWindow
 
 		if (uMsg == WM_SIZE)
 		{
-			m_width = x;
-			m_height = y;
+			m_settings.width = x;
+			m_settings.hieght = y;
 			m_eventCallback((unsigned int)EventType::WindowResize, x, y);
 
 			return 0;
@@ -159,7 +153,7 @@ namespace SClick::Core::Window::OSWindow
 			CLASSNAME, 
 			windowName, 
 			WS_OVERLAPPEDWINDOW,
-			0, 0, m_width, m_height, 0, 0, 
+			0, 0, m_settings.width, m_settings.hieght, 0, 0, 
 			hInstance, 
 			this);
 
@@ -190,17 +184,17 @@ namespace SClick::Core::Window::OSWindow
 	}
 
 	void WindowsWindow::SetEventCallback(std::function<void(
-		unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)> func)
+		unsigned int eventTypeWord, unsigned short highWord, unsigned short lowWord)>& func)
 	{
 		m_eventCallback = func;
 	}
 	const unsigned short WindowsWindow::GetWidth()
 	{
-		return m_width;
+		return m_settings.width;
 	}
 	const unsigned short WindowsWindow::GetHeight()
 	{
-		return m_height;
+		return m_settings.hieght;
 	}
 
 	LRESULT WindowsWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

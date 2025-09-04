@@ -6,9 +6,16 @@ namespace SClick::Core::DataType::ErrorHandling
 	template<typename ReturnType, typename ErrorType>
 	struct Result
 	{
-		Result();
+		Result(ReturnType);
+		Result(ErrorType);
 		Result(Result& p_other);
 		~Result();
+		operator bool();
+
+		ReturnType GetValue();
+		ErrorType GetError();
+
+	private:
 
 		union
 		{
@@ -23,9 +30,14 @@ namespace SClick::Core::DataType::ErrorHandling
 namespace SClick::Core::DataType::ErrorHandling
 {
 	template<typename ReturnType, typename ErrorType>
-	Result<ReturnType, ErrorType>::Result()
-		:error(), isError(false) {
-	}
+	inline Result<ReturnType, ErrorType>::Result(ReturnType t)
+		:value(t), isError(false)
+	{}
+
+	template<typename ReturnType, typename ErrorType>
+	inline Result<ReturnType, ErrorType>::Result(ErrorType e)
+		:error(e), isError(true)
+	{}
 
 	template<typename ReturnType, typename ErrorType>
 	Result<ReturnType, ErrorType>::Result(Result& p_other)
@@ -37,6 +49,21 @@ namespace SClick::Core::DataType::ErrorHandling
 
 	template<typename ReturnType, typename ErrorType>
 	Result<ReturnType, ErrorType>::~Result()
+	{}
+
+	template<typename ReturnType, typename ErrorType>
+	Result<ReturnType, ErrorType>::operator bool()
 	{
+		return isError;
+	}
+	template<typename ReturnType, typename ErrorType>
+	ReturnType Result<ReturnType, ErrorType>::GetValue()
+	{
+		return value;
+	}
+	template<typename ReturnType, typename ErrorType>
+	ErrorType Result<ReturnType, ErrorType>::GetError()
+	{
+		return error;
 	}
 }

@@ -7,7 +7,7 @@
 #include "sclickcore.h"
 #include "gui.h"
 
-#define TIMERS 0
+#define TIMERS 1
 
 //TODO: Replace cout with logging system that isnt slow as balls
 #if TIMERS
@@ -28,9 +28,6 @@ namespace SClick::Application
 
 		double lastTime = 0;
 		double accumulate = 0;
-
-		unsigned char shift = 1;
-		double t = 0;
 
 		Core::Utility::Debug::Timer timer;
 
@@ -104,7 +101,7 @@ namespace SClick::Application
 
 				Core::Renderer::SCRender_ClearFrame();
 
-				Core::Renderer::SCRender_DrawRect({ 0,0,500,500 }, { 255,0,0, 255 });
+				Core::Renderer::SCRender_DrawRect({ 0,0,100,100 }, { 255,0,0, 255 });
 
 				Core::Renderer::SCRender_EndDraw();
 
@@ -113,7 +110,7 @@ namespace SClick::Application
 				accumulate = 0;
 			}
 
-			//git std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			//std::this_thread::sleep_for(std::chrono::milliseconds(6));
 			lastTime = timer.End().count();
 			END_EVENT_TIMER
 		}

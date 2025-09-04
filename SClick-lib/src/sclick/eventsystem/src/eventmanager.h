@@ -31,7 +31,7 @@ namespace SClick::Core::EventSystem
 		Internal::EventQueue& GetEventQueue();
 
 	private:
-		Internal::EventQueue queue;
+		alignas(64) Internal::EventQueue queue;
 		EventCallback m_eventCallback;
 
 	private:

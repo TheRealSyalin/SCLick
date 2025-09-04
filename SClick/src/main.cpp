@@ -1,13 +1,21 @@
 #include <cassert>
 
-#include "application\application.h"
+#include "application.h"
 
 int main()
 {
 	using namespace SClick;
 
+	Core::Window::WindowSettings settings = { 0 };
+	settings.width = 720;
+	settings.hieght = 480;
+	settings.aspectRatio = 16 / 9;
+	settings.hasTitleBar = true;
+	settings.isResizable = false;
+	Core::Window::Window window = { "SClick", settings};
 	Core::EventSystem::EventManager windowEventManager;
-	Core::Window::Window window = { "SClick", 1920, 1080, windowEventManager.GetEventCallback()};
+
+	window.SetEventCallback(windowEventManager.GetEventCallback());
 
 	Core::Renderer::SCRender_Init(window.GetWindowHandle());
 	if (Core::Renderer::SCRender_GetStatus() != 0)
